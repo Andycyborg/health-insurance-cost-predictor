@@ -75,8 +75,11 @@ HealthInsurancePrediction/
 └── requirements.txt             # Python dependencies
 
 
+---
 
-👤 Author
-Developed by Anand Kumar Yadav
+## 👤 Author
 
-GitHub: [@Andycyborg] (https://github.com/Andycyborg)
+Developed by **Anand Kumar Yadav**  
+GitHub: [@Andycyborg](https://github.com/Andycyborg)
+
+---
