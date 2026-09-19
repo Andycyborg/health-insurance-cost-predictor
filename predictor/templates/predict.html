@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Insurance Charge Predictor</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: 18px;
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+            width: 100%;
+            height: calc(100vh - 36px);
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12);
+
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            background: #2563eb;
+            color: white;
+            text-align: center;
+            padding: 22px 20px;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            font-size: 14px;
+            color: #dbeafe;
+        }
+
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 28px;
+            min-height: 0;
+        }
+
+
+        /* =========================
+           LEFT FORM SECTION
+        ========================= */
+
+        .form-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    padding: 30px;
+    
+    background: #c1d5ed;
+}
+
+        .section-title {
+            margin: 0 0 22px;
+            font-size: 21px;
+            color: #0f172a;
+        }
+
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+
+        input,
+        select {
+            width: 100%;
+            height: 44px;
+            padding: 0 12px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+
+            background: #ffffff;
+            color: #1e293b;
+
+            font-size: 15px;
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .button-container {
+            margin-top: 22px;
+        }
+
+
+        button {
+            width: 100%;
+            height: 48px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: white;
+
+            font-size: 16px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: background 0.2s;
+        }
+
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* =========================
+           RIGHT RESULT SECTION
+        ========================= */
+
+        .result-section {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+
+
+        .result-box {
+            width: 100%;
+
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+
+            border-radius: 14px;
+            padding: 28px;
+        }
+
+
+        .result-title {
+            margin: 0;
+            text-align: center;
+
+            font-size: 21px;
+            color: #0f172a;
+        }
+
+
+        .charge {
+            margin: 12px 0 5px;
+
+            text-align: center;
+
+            font-size: 36px;
+            font-weight: 700;
+
+            color: #2563eb;
+        }
+
+
+        .result-subtitle {
+            margin: 0;
+
+            text-align: center;
+
+            font-size: 14px;
+            color: #64748b;
+        }
+
+
+        /* =========================
+           PERSONAL INFORMATION
+        ========================= */
+
+        .personal-info {
+            margin-top: 28px;
+        }
+
+
+        .personal-info-title {
+            margin: 0 0 15px;
+
+            font-size: 19px;
+            color: #0f172a;
+        }
+
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+
+        .info-item {
+            background: #ffffff;
+
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+
+            padding: 12px 14px;
+        }
+
+
+        .info-label {
+            display: block;
+
+            font-size: 12px;
+            color: #64748b;
+
+            margin-bottom: 4px;
+        }
+
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+
+        /* =========================
+           INITIAL STATE
+        ========================= */
+
+        .empty-result {
+            width: 100%;
+
+            border: 1px dashed #bfdbfe;
+            background: #f8fafc;
+
+            border-radius: 14px;
+
+            padding: 40px 25px;
+
+            text-align: center;
+        }
+
+
+        .empty-result h2 {
+            margin: 0 0 8px;
+
+            font-size: 21px;
+            color: #334155;
+        }
+
+
+        .empty-result p {
+            margin: 0;
+
+            font-size: 14px;
+            color: #64748b;
+        }
+
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        .error {
+            margin-top: 18px;
+
+            padding: 13px;
+
+            border-radius: 8px;
+
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+
+            color: #b91c1c;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            html,
+            body {
+                height: auto;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                height: auto;
+                min-height: calc(100vh - 20px);
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .result-section {
+                align-items: flex-start;
+            }
+
+            .charge {
+                font-size: 30px;
+            }
+        }
+
+
+        @media (max-width: 450px) {
+
+            .form-grid,
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .result-box {
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="header">
+
+        <h1>
+            Insurance Charge Predictor
+        </h1>
+
+        <p>
+            Predict estimated medical insurance charges
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <div class="main-content">
+
+
+        <!-- =====================
+             LEFT: FORM
+        ====================== -->
+
+        <div class="form-section">
+
+            <h2 class="section-title">
+                Personal Information
+            </h2>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <div class="form-grid">
+
+
+                    <!-- AGE -->
+
+                    <div class="form-group">
+
+                        <label for="age">
+                            Age
+                        </label>
+
+                        <input
+                            type="number"
+                            id="age"
+                            name="age"
+                            min="1"
+                            max="120"
+                            value="{{ request.POST.age }}"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- BMI -->
+
+                    <div class="form-group">
+
+                        <label for="bmi">
+                            BMI
+                        </label>
+
+                        <input
+                            type="number"
+                            id="bmi"
+                            name="bmi"
+                            step="0.1"
+                            min="1"
+                            max="100"
+                            value="{{ request.POST.bmi }}"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- CHILDREN -->
+
+                    <div class="form-group">
+
+                        <label for="children">
+                            Children
+                        </label>
+
+                        <input
+                            type="number"
+                            id="children"
+                            name="children"
+                            min="0"
+                            max="20"
+                            value="{{ request.POST.children }}"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- GENDER -->
+
+                    <div class="form-group">
+
+                        <label for="is_female">
+                            Gender
+                        </label>
+
+                        <select
+                            id="is_female"
+                            name="is_female"
+                            required
+                        >
+
+                            <option
+                                value="1"
+                                {% if request.POST.is_female == "1" %}
+                                selected
+                                {% endif %}
+                            >
+                                Female
+                            </option>
+
+                            <option
+                                value="0"
+                                {% if request.POST.is_female == "0" %}
+                                selected
+                                {% endif %}
+                            >
+                                Male
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- SMOKER -->
+
+                    <div class="form-group">
+
+                        <label for="is_smoker">
+                            Smoker
+                        </label>
+
+                        <select
+                            id="is_smoker"
+                            name="is_smoker"
+                            required
+                        >
+
+                            <option
+                                value="0"
+                                {% if request.POST.is_smoker == "0" %}
+                                selected
+                                {% endif %}
+                            >
+                                No
+                            </option>
+
+                            <option
+                                value="1"
+                                {% if request.POST.is_smoker == "1" %}
+                                selected
+                                {% endif %}
+                            >
+                                Yes
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- REGION -->
+
+                    <div class="form-group">
+
+                        <label for="region">
+                            Region
+                        </label>
+
+                        <select
+                            id="region"
+                            name="region"
+                            required
+                        >
+
+                            <option
+                                value="northeast"
+                                {% if request.POST.region == "northeast" %}
+                                selected
+                                {% endif %}
+                            >
+                                Northeast
+                            </option>
+
+                            <option
+                                value="northwest"
+                                {% if request.POST.region == "northwest" %}
+                                selected
+                                {% endif %}
+                            >
+                                Northwest
+                            </option>
+
+                            <option
+                                value="southeast"
+                                {% if request.POST.region == "southeast" %}
+                                selected
+                                {% endif %}
+                            >
+                                Southeast
+                            </option>
+
+                            <option
+                                value="southwest"
+                                {% if request.POST.region == "southwest" %}
+                                selected
+                                {% endif %}
+                            >
+                                Southwest
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BUTTON -->
+
+                <div class="button-container">
+
+                    <button type="submit">
+                        Calculate Insurance Charge
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <!-- ERROR -->
+
+            {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- =====================
+             RIGHT: RESULT
+        ====================== -->
+
+        <div class="result-section">
+
+
+            {% if prediction %}
+
+
+            <div class="result-box">
+
+
+                <!-- ESTIMATED CHARGE -->
+
+                <h2 class="result-title">
+                    Estimated Charge
+                </h2>
+
+
+                <div class="charge">
+                    {{ prediction }}
+                </div>
+
+
+                <p class="result-subtitle">
+                    AI/ML Regression Prediction
+                </p>
+
+
+
+                <!-- PERSONAL INFORMATION -->
+
+                <div class="personal-info">
+
+                    <h2 class="personal-info-title">
+                        Personal Information
+                    </h2>
+
+
+                    <div class="info-grid">
+
+
+                        <!-- AGE -->
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Age
+                            </span>
+
+                            <span class="info-value">
+                                {{ request.POST.age }}
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- BMI -->
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                BMI
+                            </span>
+
+                            <span class="info-value">
+                                {{ request.POST.bmi }}
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- CHILDREN -->
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Children
+                            </span>
+
+                            <span class="info-value">
+                                {{ request.POST.children }}
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- GENDER -->
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Gender
+                            </span>
+
+                            <span class="info-value">
+
+                                {% if request.POST.is_female == "1" %}
+                                    Female
+                                {% else %}
+                                    Male
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- SMOKER -->
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Smoker
+                            </span>
+
+                            <span class="info-value">
+
+                                {% if request.POST.is_smoker == "1" %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- REGION -->
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Region
+                            </span>
+
+                            <span class="info-value">
+
+                                {% if request.POST.region == "northeast" %}
+                                    Northeast
+
+                                {% elif request.POST.region == "northwest" %}
+                                    Northwest
+
+                                {% elif request.POST.region == "southeast" %}
+                                    Southeast
+
+                                {% elif request.POST.region == "southwest" %}
+                                    Southwest
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% else %}
+
+
+            <!-- BEFORE FIRST PREDICTION -->
+
+            <div class="empty-result">
+
+                <h2>
+                    Estimated Charge
+                </h2>
+
+                <p>
+                    Enter your information and calculate
+                    the estimated insurance charge.
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</div>
+
+<footer><center><p style="font-family: Georgia, 'Times New Roman', Times, serif;">build by Andy</p></center></footer>
+
+</body>
+
+</html>
