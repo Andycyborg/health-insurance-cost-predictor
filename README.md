@@ -79,4 +79,4 @@ HealthInsurancePrediction/
 👤 Author
 Developed by Anand Kumar Yadav
 
-GitHub: @Andycyborg
+GitHub: [@Andycyborg] (https://github.com/Andycyborg)
