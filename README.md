@@ -1,85 +1,200 @@
-# Health Insurance Cost Predictor 🏥
+# Health Insurance Cost Predictor
 
-An end-to-end Machine Learning web application built using **Django** and **Scikit-Learn** that estimates annual medical health insurance charges based on user demographic and health metrics[cite: 1, 2].
+A Django-based machine learning web application that predicts annual health insurance charges based on demographic and health-related information.
 
-The model processes inputs directly through a custom feature processing pipeline—handling feature scaling and categorical encoding on the fly to render instant cost predictions[cite: 1].
+The application uses a trained Scikit-Learn Linear Regression model and performs the required feature preprocessing before generating a prediction.
 
----
+## Live Application
 
-## 🔗 Live Application
+**Live Demo:** https://health-insurance-cost-predictor-l1g6.onrender.com/
 
-- **Live Web App:** [https://health-insurance-cost-predictor-l1g6.onrender.com/](https://health-insurance-cost-predictor-l1g6.onrender.com/)
+## Features
 
----
+* Predicts estimated annual health insurance charges
+* Django-based web interface for entering patient information
+* Accepts age, BMI, number of children, gender, smoking status, and region
+* Performs feature preprocessing before prediction
+* Uses a saved machine learning model for inference
+* Uses a saved `StandardScaler` for numerical feature scaling
+* Responsive form-based interface
+* Deployed on Render using Gunicorn and WhiteNoise
 
-## ✨ Features
+## Tech Stack
 
-- **Interactive Dashboard:** Clean, user-friendly form interface for inputting age, BMI, children, gender, smoking status, and region.
-- **Real-Time ML Inference:** Instant predictions rendered on the UI without page-reload friction[cite: 1, 2].
-- **Feature Engineering & Preprocessing:** Dynamically standardizes numeric values and creates one-hot encoded and derived features (such as `bmi_category_Obese`) matching the trained model requirements[cite: 1].
-- **Production-Ready Setup:** Integrated with **WhiteNoise** for static asset management and **Gunicorn** for WSGI deployment on Render.
+| Category             | Technologies  |
+| -------------------- | ------------- |
+| Programming Language | Python        |
+| Backend              | Django        |
+| Machine Learning     | Scikit-Learn  |
+| Data Processing      | Pandas, NumPy |
+| Model Serialization  | Joblib        |
+| Frontend             | HTML5, CSS3   |
+| Production Server    | Gunicorn      |
+| Static Files         | WhiteNoise    |
+| Deployment           | Render        |
 
----
+## Machine Learning Model
 
-## 🛠️ Tech Stack
+The project uses a pre-trained **Linear Regression** model stored as:
 
-- **Backend:** Python 3, Django[cite: 1]
-- **Machine Learning & Data Processing:** Scikit-Learn, Pandas, NumPy, Joblib[cite: 1, 3, 4]
-- **Frontend:** HTML5, CSS3[cite: 2]
-- **Deployment & Web Server:** Gunicorn, WhiteNoise, Render
+```text
+ml_models/insurance_model.joblib
+```
 
----
+A fitted `StandardScaler` is also stored and used for preprocessing:
 
-## 🧠 Model & Feature Pipeline Details
+```text
+ml_models/scaler.joblib
+```
 
-The underlying model uses a pre-trained **Linear Regression** model (`insurance_model.joblib`) along with a pre-fitted **StandardScaler** (`scaler.joblib`)[cite: 1, 3, 4].
+### Input Features
 
-The pipeline performs the following steps during each prediction request:
-1. **Inputs Extracted:** Age, BMI, Children, Gender (`is_female`), Smoker Status (`is_smoker`), and Region[cite: 1].
-2. **Derived Features Engineered:**
-   - Regional flags (`region_southeast`, `region_northwest`)[cite: 1].
-   - High-risk indicator `bmi_category_Obese` (triggered when $\text{BMI} \ge 30.0$)[cite: 1].
-3. **Scaling:** Continuous variables (`age`, `bmi`, `children`) are transformed using the saved `StandardScaler`[cite: 1].
-4. **Prediction:** Transformed features are fed into the model to produce the final currency-formatted prediction[cite: 1].
+The model uses the following information:
 
----
+* Age
+* BMI
+* Number of children
+* Gender
+* Smoking status
+* Region
 
-## 📁 Project Structure
+### Feature Processing
+
+Before making a prediction, the application processes the submitted values to match the features used during model training.
+
+The preprocessing includes:
+
+1. Extracting the submitted input values.
+2. Converting gender and smoking status into numerical features.
+3. Creating regional indicator features.
+4. Creating the `bmi_category_Obese` feature when BMI is `30.0` or higher.
+5. Scaling numerical features such as age, BMI, and children using the saved `StandardScaler`.
+6. Passing the processed feature set to the trained Linear Regression model.
+7. Displaying the predicted insurance charge in the web interface.
+
+## Project Structure
 
 ```text
 HealthInsurancePrediction/
 │
-├── ml_models/                   # Pre-trained ML artifacts
-│   ├── insurance_model.joblib   # Linear regression model
-│   └── scaler.joblib            # Fitted StandardScaler
+├── ml_models/
+│   ├── insurance_model.joblib
+│   └── scaler.joblib
 │
-├── mlModel/                     # Django root configuration
-│   ├── settings.py              # App settings, WhiteNoise & production config
-│   ├── urls.py                  # Global routing
-│   └── wsgi.py                  # WSGI entrypoint for deployment
+├── mlModel/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
 │
-├── predictor/                   # Core application app
-│   ├── migrations/              # Django migrations directory
+├── predictor/
+│   ├── migrations/
 │   ├── templates/
-│   │   └── predict.html         # UI template for form and prediction display
-│   ├── views.py                 # Core request logic, feature processing, & model execution
-│   ├── urls.py                  # Predictor route mapping
+│   │   └── predict.html
+│   ├── views.py
+│   ├── urls.py
 │   ├── admin.py
 │   ├── apps.py
 │   ├── models.py
 │   └── tests.py
 │
-├── .gitignore                   # Version control exclusions
-├── manage.py                    # Django management script
-├── README.md                    # Project documentation
-└── requirements.txt             # Python dependencies
+├── .gitignore
+├── manage.py
+├── README.md
+└── requirements.txt
+```
 
+## How It Works
 
----
+The application follows a simple prediction flow:
 
-## 👤 Author
+```text
+User Input
+    ↓
+Django Form
+    ↓
+Feature Processing
+    ↓
+StandardScaler
+    ↓
+Linear Regression Model
+    ↓
+Predicted Insurance Charge
+    ↓
+Result Displayed in Browser
+```
 
-Developed by **Anand Kumar Yadav**  
-GitHub: [@Andycyborg](https://github.com/Andycyborg)
+## Local Setup
 
----
+### 1. Clone the repository
+
+```bash
+git clone <your-repository-url>
+cd HealthInsurancePrediction
+```
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+Activate it on Linux/macOS:
+
+```bash
+source venv/bin/activate
+```
+
+On Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run migrations
+
+```bash
+python manage.py migrate
+```
+
+### 5. Start the development server
+
+```bash
+python manage.py runserver
+```
+
+Open the application at:
+
+```text
+http://127.0.0.1:8000/
+```
+
+## Deployment
+
+The application is deployed on **Render** using:
+
+* Gunicorn as the production WSGI server
+* WhiteNoise for serving static files
+* Django for the web application
+* Scikit-Learn for model inference
+
+## Limitations
+
+The prediction is an estimate generated by a machine learning model based on the available input features. Actual insurance charges can vary depending on factors that are not included in the model.
+
+This project is intended for educational and demonstration purposes and should not be used as a substitute for an actual insurance quote.
+
+## Author
+
+**Anand Kumar Yadav**
+
+B.Tech Computer Science Engineering Student
+Python | Django | Machine Learning
+
+* GitHub: https://github.com/Andycyborg
+* LinkedIn: https://linkedin.com/in/anandxofficial
